@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Викторина: Госуслуги и мессенджеры</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 10px;
+        }
+        
+        .question-container {
+            background: #e3f2fd;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            border-left: 5px solid #2196F3;
+        }
+        
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin: 20px 0;
+        }
+        
+        .option {
+            padding: 15px;
+            background: white;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .option:hover {
+            border-color: #2196F3;
+            background: #f8fdff;
+        }
+        
+        .correct {
+            background: #d4edda !important;
+            border-color: #28a745 !important;
+            color: #155724;
+        }
+        
+        .incorrect {
+            background: #f8d7da !important;
+            border-color: #dc3545 !important;
+            color: #721c24;
+        }
+        
+        .result {
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            text-align: center;
+            font-weight: bold;
+            display: none;
+        }
+        
+        .success {
+            background: #d4edda;
+            color: #155724;
+            border: 2px solid #c3e6cb;
+        }
+        
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 2px solid #f5c6cb;
+        }
+        
+        .next-btn {
+            width: 100%;
+            padding: 15px;
+            background: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 18px;
+            cursor: pointer;
+            display: none;
+        }
+        
+        .progress {
+            text-align: center;
+            color: #666;
+            margin-bottom: 20px;
+        }
+        
+        .final-score {
+            text-align: center;
+            font-size: 24px;
+            font-weight: bold;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📱 Викторина: Госуслуги и мессенджеры</h1>
+        <div class="progress" id="progress">Вопрос 1 из 5</div>
+        
+        <div id="quiz-container">
+            <div class="question-container">
+                <h3 id="question">Загрузка вопроса...</h3>
+            </div>
+            
+            <div class="options" id="options">
+                <!-- Варианты ответов появятся здесь -->
+            </div>
+            
+            <div class="result" id="result"></div>
+            
+            <button class="next-btn" id="next-btn" onclick="nextQuestion()">Следующий вопрос →</button>
+        </div>
+        
+        <div id="final-result" style="display: none;">
+            <div class="final-score" id="final-score"></div>
+            <button class="next-btn" onclick="location.reload()">Пройти еще раз</button>
+        </div>
+    </div>
+
+    <script>
+        const questions = [
+            {
+                question: "Вам нужно записаться к терапевту через Госуслуги. Что делать, если после записи талон не пришел на почту?",
+                options: [
+                    "Записаться еще раз",
+                    "Позвонить в регистратуру поликлиники",
+                    "Проверить раздел 'Мои заявления' в личном кабинете Госуслуг",
+                    "Написать жалобу на сайт"
+                ],
+                correct: 2,
+                explanation: "❌ Неправильно! Электронный талон всегда сохраняется в личном кабинете Госуслуг в разделе 'Мои заявления'. Не нужно записываться повторно."
+            },
+            {
+                question: "Во время видеозвонка с внуком вас плохо слышно. Что проверить в первую очередь?",
+                options: [
+                    "Яркость экрана телефона",
+                    "Настройки громкости и микрофона",
+                    "Цвет фона за спиной",
+                    "Количество памяти на телефоне"
+                ],
+                correct: 1,
+                explanation: "❌ Неправильно! Проблемы со звуком обычно связаны с настройками микрофона или громкости. Проверьте, не отключен ли микрофон и не закрыт ли он пальцем."
+            },
+            {
+                question: "Нужно отправить скан паспорта для оформления услуги. Как сделать это безопасно?",
+                options: [
+                    "Отправить фото в открытом чате",
+                    "Переслать по электронной почте всем знакомым",
+                    "Отправить через официальный чат в Госуслугах или мессенджере конкретному сотруднику",
+                    "Выложить в социальные сети"
+                ],
+                correct: 2,
+                explanation: "❌ Неправильно! Документы нужно отправлять только через защищенные каналы конкретным получателям. Никогда не публикуйте их в открытых чатах или соцсетях."
+            },
+            {
+                question: "Вы хотите отправить несколько фото внуку в WhatsApp. Как это сделать быстро?",
+                options: [
+                    "Отправлять каждое фото отдельным сообщением",
+                    "Нажать на скрепку и выбрать несколько фото сразу",
+                    "Пересылать из галереи по одному",
+                    "Сначала создать документ Word с фото"
+                ],
+                correct: 1,
+                explanation: "❌ Неправильно! В WhatsApp можно выбрать сразу несколько фото - нажмите на скрепку, выберите 'Галерея' и отмечайте нужные фото галочками."
+            },
+            {
+                question: "При попытке войти в Госуслуги появляется сообщение 'Неверный пароль'. Что делать?",
+                options: [
+                    "Создать новый аккаунт",
+                    "Позвонить по номеру из случайного смс",
+                    "Воспользоваться функцией 'Восстановить пароль'",
+                    "Прекратить пользоваться Госуслугами"
+                ],
+                correct: 2,
+                explanation: "❌ Неправильно! Не нужно создавать новый аккаунт. Используйте официальную функцию восстановления пароля на сайте Госуслуг - она безопасна и проста."
+            }
+        ];
+
+        let currentQuestion = 0;
+        let score = 0;
+
+        function loadQuestion() {
+            const question = questions[currentQuestion];
+            document.getElementById('question').textContent = question.question;
+            document.getElementById('progress').textContent = `Вопрос ${currentQuestion + 1} из ${questions.length}`;
+            
+            const optionsContainer = document.getElementById('options');
+            optionsContainer.innerHTML = '';
+            
+            question.options.forEach((option, index) => {
+                const optionElement = document.createElement('div');
+                optionElement.className = 'option';
+                optionElement.textContent = option;
+                optionElement.onclick = () => checkAnswer(index);
+                optionsContainer.appendChild(optionElement);
+            });
+            
+            document.getElementById('result').style.display = 'none';
+            document.getElementById('next-btn').style.display = 'none';
+        }
+
+        function checkAnswer(selectedIndex) {
+            const question = questions[currentQuestion];
+            const options = document.querySelectorAll('.option');
+            const resultDiv = document.getElementById('result');
+            
+            // Отключаем все кнопки
+            options.forEach(option => {
+                option.onclick = null;
+            });
+            
+            // Подсвечиваем правильный и неправильный ответ
+            options.forEach((option, index) => {
+                if (index === question.correct) {
+                    option.classList.add('correct');
+                } else if (index === selectedIndex) {
+                    option.classList.add('incorrect');
+                }
+            });
+            
+            // Показываем результат
+            if (selectedIndex === question.correct) {
+                resultDiv.textContent = "✅ Правильно! " + question.explanation.replace("❌ Неправильно! ", "");
+                resultDiv.className = 'result success';
+                score++;
+            } else {
+                resultDiv.textContent = question.explanation;
+                resultDiv.className = 'result error';
+            }
+            
+            resultDiv.style.display = 'block';
+            document.getElementById('next-btn').style.display = 'block';
+        }
+
+        function nextQuestion() {
+            currentQuestion++;
+            
+            if (currentQuestion < questions.length) {
+                loadQuestion();
+            } else {
+                showFinalResult();
+            }
+        }
+
+        function showFinalResult() {
+            document.getElementById('quiz-container').style.display = 'none';
+            document.getElementById('final-result').style.display = 'block';
+            
+            const finalScoreDiv = document.getElementById('final-score');
+            const percentage = Math.round((score / questions.length) * 100);
+            
+            let message = '';
+            if (percentage >= 80) {
+                message = `🎉 Отлично! ${score} из ${questions.length} правильных ответов! Вы уверенный пользователь цифровых услуг!`;
+            } else if (percentage >= 60) {
+                message = `👍 Хорошо! ${score} из ${questions.length} правильных ответов! Вы хорошо разбираетесь в Госуслугах и мессенджерах!`;
+            } else {
+                message = `📚 Есть над чем поработать! ${score} из ${questions.length} правильных ответов. Потренируйтесь еще - у вас все получится!`;
+            }
+            
+            finalScoreDiv.textContent = message;
+        }
+
+        // Загружаем первый вопрос при старте
+        loadQuestion();
+    </script>
+</body>
+</html>
